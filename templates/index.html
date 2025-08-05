@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini Chatbot</title>
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            width: 370px;
+            max-width: 95vw;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+        .chat-header {
+            padding: 18px;
+            border-bottom: 1px solid #ececec;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1877f2;
+            text-align: center;
+            background: #fff;
+            border-radius: 12px 12px 0 0;
+        }
+        #chat-box {
+            flex: 1;
+            padding: 18px;
+            overflow-y: auto;
+            background: #f6f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .msg-row {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+        }
+        .msg-user {
+            justify-content: flex-end;
+        }
+        .msg-bot {
+            justify-content: flex-start;
+        }
+        .msg-bubble {
+            max-width: 70%;
+            padding: 10px 16px;
+            border-radius: 18px;
+            margin-bottom: 2px;
+            font-size: 1em;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        .msg-user .msg-bubble {
+            background: #1877f2;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .msg-bot .msg-bubble {
+            background: #e4e6eb;
+            color: #050505;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 14px;
+            border-top: 1px solid #ececec;
+            background: #fff;
+            border-radius: 0 0 12px 12px;
+        }
+        #message {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            outline: none;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+        #send-btn {
+            background: #1877f2;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #send-btn:hover {
+            background: #145db2;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Mini Chatbot</div>
+        <div id="chat-box"></div>
+        <form class="chat-input-area" onsubmit="sendMessage(); return false;">
+            <input type="text" id="message" placeholder="Type a message..." autocomplete="off" />
+            <button id="send-btn" type="submit">&#9658;</button>
+        </form>
+    </div>
+    <script>
+        async function sendMessage() {
+            const msg = document.getElementById("message").value;
+            const res = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+            document.getElementById("chat-box").innerHTML += "<div class='msg-row msg-user'><div class='msg-bubble'>" + msg + "</div></div>";
+            document.getElementById("chat-box").innerHTML += "<div class='msg-row msg-bot'><div class='msg-bubble'>" + data.reply + "</div></div>";
+            document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
+            document.getElementById("message").value = "";
+        }
+    </script>
+</body>
+</html>
